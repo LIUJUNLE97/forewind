@@ -1,0 +1,33 @@
+
+# 忽略数据文件夹
+data/
+data_2/
+src/
+24-24_analysis/
+24-24/
+7-24/
+random/
+som_post_analysis/
+som_vis/
+files/
+results/
+logs_slurm/
+logs_slurm_3/
+models/
+venv/
+.ipynb_checkpoints/
+
+# 忽略大数据文件
+*.npy
+*.pth
+*.png
+*.pdf
+*.vts
+*.csv
+*.json
+*.out
+*.err
+
+# 忽略临时文件
+untitled.txt
+.DS_Store

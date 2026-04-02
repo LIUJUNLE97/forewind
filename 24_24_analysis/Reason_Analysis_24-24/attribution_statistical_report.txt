@@ -1,0 +1,30 @@
+============================================================
+轨道一：线性混合效应模型 (LMM) 显著性分析报告
+============================================================
+                              Mixed Linear Model Regression Results
+==================================================================================================
+Model:                            MixedLM               Dependent Variable:               RMSE    
+No. Observations:                 2304                  Method:                           REML    
+No. Groups:                       12                    Scale:                            0.0558  
+Min. group size:                  192                   Log-Likelihood:                   -25.0295
+Max. group size:                  192                   Converged:                        Yes     
+Mean group size:                  192.0                                                           
+--------------------------------------------------------------------------------------------------
+                                                        Coef.  Std.Err.   z    P>|z| [0.025 0.975]
+--------------------------------------------------------------------------------------------------
+Intercept                                                0.704    0.160  4.391 0.000  0.390  1.018
+C(Model_Family, Treatment('CNN'))[T.Operator]            0.179    0.017 10.269 0.000  0.145  0.214
+C(Model_Family, Treatment('CNN'))[T.RNN]                -0.135    0.015 -8.935 0.000 -0.165 -0.106
+Elevation                                                0.000    0.000  1.071 0.284 -0.000  0.000
+Roughness                                               -0.001    0.001 -1.434 0.151 -0.002  0.000
+Roughness:C(Model_Family, Treatment('CNN'))[T.Operator]  0.000    0.000  3.719 0.000  0.000  0.000
+Roughness:C(Model_Family, Treatment('CNN'))[T.RNN]       0.000    0.000  2.816 0.005  0.000  0.000
+Lead_Time                                                0.027    0.001 38.217 0.000  0.026  0.029
+Group Var                                                0.157    0.315                           
+==================================================================================================
+
+
+[重点关注] 地形与模型架构的交互项 P 值:
+Roughness:C(Model_Family, Treatment('CNN'))[T.Operator]    0.000200
+Roughness:C(Model_Family, Treatment('CNN'))[T.RNN]         0.004856
+
