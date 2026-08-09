@@ -63,7 +63,6 @@ x
 
 ## Reproducibility policy
 
-- Do not commit `*.nc`, `*.npy`, `*.pth`, generated PNG/PDF/GIF/AVI files, virtual environments, Slurm logs, or notebook checkpoints.
 - Publish immutable data/checkpoint archives separately (Zenodo, Hugging Face, or the journal repository) and record their DOI/revision in the final README.
 - Record the exact Git commit, Python version, PyTorch/CUDA version, random seed, data revision, and command line for every reported result.
 - Confirm that all third-party datasets, boundary files, fonts, and pretrained checkpoints can legally be redistributed.
