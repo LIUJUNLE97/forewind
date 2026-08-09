@@ -54,6 +54,13 @@ python src_2/prediction_region_gif.py --help
 
 The scripts accept explicit data/output paths where possible. Do not rely on the historical cluster paths embedded in legacy batch files; replace them with paths under the local checkout or pass the corresponding command-line arguments.
 
+## Demos
+<img width="1440" height="900" alt="shanghai_sample_0_model_comparison" src="https://github.com/user-attachments/assets/31f5864a-29df-4808-8b41-3197a25c0a9a" />
+<img width="1440" height="900" alt="wuhan_sample_0_model_comparison" src="https://github.com/user-attachments/assets/4520c074-1197-4294-8492-8f9b9bdf1f76" />
+<img width="1440" height="900" alt="golmud_sample_0_model_comparison" src="https://github.com/user-attachments/assets/0d2b6839-585c-49e9-bcf0-09a3b5d35f36" />
+<img width="1440" height="900" alt="chengdu_sample_0_model_comparison" src="https://github.com/user-attachments/assets/d6b7c1e5-8d58-4586-a159-ec4caacf19e9" />
+x
+
 ## Reproducibility policy
 
 - Do not commit `*.nc`, `*.npy`, `*.pth`, generated PNG/PDF/GIF/AVI files, virtual environments, Slurm logs, or notebook checkpoints.
