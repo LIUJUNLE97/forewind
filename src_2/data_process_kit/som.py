@@ -10,8 +10,9 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-INPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
-OUTPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+INPUT_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
+OUTPUT_DIR = os.environ.get('WIND_SOM_OUTPUT_DIR', os.path.join(PROJECT_ROOT, 'fig', 'som'))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 SOM_ROWS, SOM_COLS = 3, 3 # 保持 3x3=9 个原始聚类

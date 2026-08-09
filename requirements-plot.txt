@@ -1,0 +1,15 @@
+numpy
+pandas
+xarray
+netCDF4
+dask[array]
+matplotlib
+scipy
+scikit-learn
+seaborn
+tqdm
+Pillow
+imageio-ffmpeg
+cartopy
+cnmaps
+huggingface-hub

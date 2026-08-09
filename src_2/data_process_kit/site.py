@@ -5,8 +5,9 @@ import os
 
 # ================= 1. 配置区 =================
 # 输入：上一步 SOM 生成的全量数据
-INPUT_CSV = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_full_results.csv'
-OUTPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/sites'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+INPUT_CSV = os.environ.get('WIND_SOM_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_full_results.csv'))
+OUTPUT_DIR = os.environ.get('WIND_SITES_OUTPUT_DIR', os.path.join(PROJECT_ROOT, 'fig', 'sites'))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 START_YEAR, END_YEAR = 1999, 2024

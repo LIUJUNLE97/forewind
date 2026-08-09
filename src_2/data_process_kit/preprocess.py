@@ -9,8 +9,9 @@ from tqdm import tqdm
 warnings.filterwarnings('ignore')
 
 # ================= 配置路径 =================
-RAW_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data/raw'
-PROCESSED_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+RAW_DIR = os.environ.get('WIND_RAW_DIR', os.path.join(PROJECT_ROOT, 'data', 'raw'))
+PROCESSED_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
 
 if not os.path.exists(PROCESSED_DIR):
     os.makedirs(PROCESSED_DIR)

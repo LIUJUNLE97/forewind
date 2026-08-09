@@ -3,14 +3,16 @@ import os
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib
+from pathlib import Path
 
 # 服务器无显示器运行
 matplotlib.use('Agg') 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Batch Visualization for Multiple Regions")
+    project_root = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parents[1]))
     parser.add_argument('--base_dir', type=str, 
-                        default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/24-24',
+                        default=str(project_root / '24-24'),
                         help='Base directory containing regional result folders')
     parser.add_argument('--regions', nargs='+', default=['golmud', 'shanghai','haikou','lhasa','kunming','qingdao','fuzhou','hohhot','guangzhou','urumqi','chengdu', 'wuhan'], 
                         help='List of regions to process')
@@ -94,6 +96,11 @@ def main():
             ax.set_title(f"{region.capitalize()}")
             ax.set_xlabel("Time (h)")
             ax.set_ylabel("Wind Speed")
+            # Keep the outer frame of every regional prediction panel crisp
+            # and consistent with the other prediction visualizations.
+            for spine in ax.spines.values():
+                spine.set_color('black')
+                spine.set_linewidth(1.2)
             
             # --- 优化后的图例设置 ---
             if i == 0: 

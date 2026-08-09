@@ -4,10 +4,11 @@ import os
 
 # ================= 1. 配置路径 =================
 # 输入文件：SOM 全量结果与选定的 12 个站点坐标
-SOM_RESULTS_CSV = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_full_results.csv'
-SITES_COORDS_CSV = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/final_12_sites_coords.csv'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+SOM_RESULTS_CSV = os.environ.get('WIND_SOM_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_full_results.csv'))
+SITES_COORDS_CSV = os.environ.get('WIND_SITES_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'final_12_sites_coords.csv'))
 # 输出目录
-OUTPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som_plots'
+OUTPUT_DIR = os.environ.get('WIND_FIG_DIR', os.path.join(PROJECT_ROOT, 'fig', 'som_plots'))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def plot_maps():

@@ -1,9 +1,12 @@
 import xarray as xr
 import numpy as np
+import os
+from pathlib import Path
 
 # 1. 指向你的原始 NetCDF 文件路径 (ERA5 原始数据)
 # 请替换为你 Alvis 上的真实路径，比如 data/weather_data_2023.nc
-NC_FILE_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed/processed_1999_01.nc'
+PROJECT_ROOT = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parents[1]))
+NC_FILE_PATH = os.environ.get('WIND_REFERENCE_NC', str(PROJECT_ROOT / 'processed' / 'processed_1999_01.nc'))
 
 try:
     # 使用 xarray 打开
@@ -17,7 +20,8 @@ try:
     lats = ds.latitude.values
     
     # 3. 保存为 npz 文件供后续画图使用
-    save_path = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/lat_lon_grid.npz'
+    save_path = os.environ.get('WIND_LAT_LON_GRID', str(PROJECT_ROOT / 'data' / 'metadata' / 'lat_lon_grid.npz'))
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
     np.savez(save_path, lons=lons, lats=lats)
     
     print(f"✅ 成功提取坐标！")

@@ -14,9 +14,10 @@ plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
 plt.rcParams['mathtext.fontset'] = 'stix' # 数学公式字体也匹配
 plt.rcParams['font.size'] = 12
 
-SOM_RESULT_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_map.npy'
-LAT_LON_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/lat_lon_grid.npz'
-OUTPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/som_vis'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SOM_RESULT_PATH = os.environ.get('WIND_SOM_MAP', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_map.npy'))
+LAT_LON_PATH = os.environ.get('WIND_LAT_LON_GRID', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'lat_lon_grid.npz'))
+OUTPUT_DIR = os.environ.get('WIND_FIG_DIR', os.path.join(PROJECT_ROOT, 'fig'))
 EXTENT = [70, 140, 15, 55]
 
 # 6 个典型城市的坐标

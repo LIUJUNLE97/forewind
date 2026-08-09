@@ -6,9 +6,10 @@ import os
 
 # ---------------- 配置 ----------------
 # 你的 SOM 结果路径
-SOM_CSV = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_full_results.csv'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+SOM_CSV = os.environ.get('WIND_SOM_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_full_results.csv'))
 # 你的 NC 数据路径
-NC_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
+NC_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
 # 上海坐标
 TARGET_LAT = 31.23
 TARGET_LON = 121.47

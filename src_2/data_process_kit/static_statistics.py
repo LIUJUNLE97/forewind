@@ -7,7 +7,8 @@ import re
 from tqdm import tqdm
 
 # ================= 配置路径 =================
-PROCESSED_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROCESSED_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
 OUTPUT_STATS_PATH = os.path.join(PROCESSED_DIR, 'normalization_stats.json')
 
 def generate_normalization_stats():

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-PROJECT_ACCOUNT="NAISS2025-5-144" 
-PROJECT_DIR=$(pwd)
+PROJECT_ACCOUNT="${WIND_PROJECT_ACCOUNT:-YOUR_PROJECT_ACCOUNT}"
+PROJECT_DIR=${WIND_PROJECT_ROOT:-$(cd "$(dirname "$0")" && pwd)}
 
 # 虚拟环境路径
-VENV_PATH="/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/venv"
+VENV_PATH="${WIND_VENV_PATH:-${PROJECT_DIR}/.venv}"
 
 # 数据路径
-NPY_DATA_DIR="/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/npy_data"
-SOM_MAP_PATH="/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_map.npy"
+NPY_DATA_DIR="${WIND_NPY_DATA_DIR:-${PROJECT_DIR}/npy_data}"
+SOM_MAP_PATH="${WIND_SOM_MAP:-${PROJECT_DIR}/data/metadata/som_map.npy}"
 
 
 # 2. 实验超参数配置

@@ -1,0 +1,11 @@
+# Install a platform-specific PyTorch build first when CUDA is required.
+torch
+neuraloperator
+minisom
+numpy
+pandas
+xarray
+netCDF4
+dask[array]
+scikit-learn
+tqdm

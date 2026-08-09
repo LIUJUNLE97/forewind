@@ -1,18 +1,38 @@
 import numpy as np
 import os
 import argparse
+from pathlib import Path
 import matplotlib
 # 关键：服务器无显示器运行
 matplotlib.use('Agg') 
+matplotlib.rcParams['font.family'] = 'Arial'
 # 确保导入路径正确
 from evaluation.vis import BenchmarkVisualizer
 
 parser = argparse.ArgumentParser()
+PROJECT_ROOT = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parents[1]))
 # 修正默认路径，指向你的 analysis_results_shanghai
 parser.add_argument('--output_dir', type=str, 
-                    default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/analysis_results_golmud')
+                    default=str(PROJECT_ROOT / 'analysis_results_golmud'))
 # 根据你实际跑通的模型修改默认列表
 parser.add_argument('--models', nargs='+', default=['cnn', 'fno', 'kan', 'convgru', 'trajgru','unet','predrnn', 'convlstm'], help='List of models to compare')
+parser.add_argument('--title_suffix', type=str, default='Comparison',
+                    help='Plot title suffix; it is also used in the output filename')
+parser.add_argument('--model_linewidth', type=float, default=2.2,
+                    help='Line width for model predictions')
+parser.add_argument('--marker_size', type=float, default=6.0,
+                    help='Marker size for model predictions')
+parser.add_argument('--hide_legend', action='store_true',
+                    help='Hide the legend in the multi-model comparison plot')
+parser.add_argument('--figure_size', nargs=2, type=float, default=[8.2, 3.8],
+                    metavar=('WIDTH', 'HEIGHT'),
+                    help='Figure size in inches, optimized for a two-column LaTeX row')
+parser.add_argument('--axis_label_size', type=float, default=17.0,
+                    help='Font size for x/y axis labels')
+parser.add_argument('--tick_label_size', type=float, default=15.0,
+                    help='Font size for axis tick labels')
+parser.add_argument('--legend_font_size', type=float, default=11.0,
+                    help='Font size for the legend')
 args = parser.parse_args()
 
 def main():
@@ -66,7 +86,18 @@ def main():
         # 画多模型对比图
         print(">>> Drawing comparison plot...")
         # 此时 ground_truth_sample 和 model_preds 里的 value 都是 (24,) 形状，不会报错了
-        visualizer.plot_multi_model_series(ground_truth_sample, model_preds, title_suffix="Comparison on Golmud")
+        visualizer.plot_multi_model_series(
+            ground_truth_sample,
+            model_preds,
+            title_suffix=args.title_suffix,
+            model_linewidth=args.model_linewidth,
+            marker_size=args.marker_size,
+            show_legend=not args.hide_legend,
+            figure_size=tuple(args.figure_size),
+            axis_label_size=args.axis_label_size,
+            tick_label_size=args.tick_label_size,
+            legend_font_size=args.legend_font_size,
+        )
         print(f"🎉 Done! 对比图已保存至: {args.output_dir}")
     else:
         print("❌ 错误：未找到任何有效的模型结果，请检查路径。")

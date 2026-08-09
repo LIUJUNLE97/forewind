@@ -9,9 +9,10 @@ from tqdm import tqdm
 
 # ================= 1. 自动化配置 (请修改这里) =================
 # 指向你刚才预处理好的 .nc 文件目录
-PROCESSED_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROCESSED_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
 # 指向你的 SOM 结果 CSV
-SOM_CSV_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_full_results.csv'
+SOM_CSV_PATH = os.environ.get('WIND_SOM_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_full_results.csv'))
 # 输出诊断报告的目录
 REPORT_DIR = './diagnostic_reports'
 os.makedirs(REPORT_DIR, exist_ok=True)

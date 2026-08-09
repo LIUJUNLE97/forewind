@@ -6,14 +6,15 @@ import glob
 
 # ================= 配置区 =================
 # 1. 你的 CSV 文件路径 (输入)
-CSV_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som_evaluation/final_som_clusters.csv'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+CSV_PATH = os.environ.get('WIND_SOM_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'final_som_clusters.csv'))
 
 # 2. 你的任意一个 NC 文件路径 (用于获取正确的经纬度网格参照)
 # 我们需要知道原始数据的长宽和经纬度排序，才能把 CSV 还原成正确的矩阵
-NC_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
+NC_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
 
 # 3. 输出的 NPY 文件路径
-OUTPUT_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som_evaluation/som_map.npy'
+OUTPUT_PATH = os.environ.get('WIND_SOM_MAP', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_map.npy'))
 # =========================================
 
 def generate_som_map():

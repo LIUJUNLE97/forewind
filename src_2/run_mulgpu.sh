@@ -18,11 +18,13 @@ from evaluation.vis import BenchmarkVisualizer
 
 # --- 1. 参数配置 ---
 parser = argparse.ArgumentParser(description='Formal Training Script - DDP Version')
+project_root = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+default_data_dir = os.environ.get('WIND_NPY_DATA_DIR', os.path.join(project_root, 'npy_data'))
 
 # 路径参数
 default_out_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'analysis_results')
-parser.add_argument('--nc_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/npy_data')
-parser.add_argument('--som_map_path', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_map.npy')
+parser.add_argument('--nc_dir', type=str, default=default_data_dir)
+parser.add_argument('--som_map_path', type=str, default=os.path.join(project_root, 'data', 'metadata', 'som_map.npy'))
 parser.add_argument('--stats_file', type=str, default='normalization_stats.json')
 parser.add_argument('--output_dir', type=str, default=default_out_dir)
 

@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg') # 关键：防止服务器报错
 import matplotlib.pyplot as plt
+from pathlib import Path
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 from model.model_factory import get_model
@@ -16,13 +17,15 @@ from run_models import test
 
 def get_args():
     parser = argparse.ArgumentParser()
+    project_root = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parents[1]))
+    default_data_dir = Path(os.environ.get('WIND_NPY_DATA_DIR', project_root / 'npy_data'))
     # -------------------------------------------------------
     # 1. 路径参数
     # -------------------------------------------------------
-    parser.add_argument('--output_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/analysis_results_3', help='Path to load pre-trained model')
-    parser.add_argument('--save_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/mlp_singlepoint', help='Path to save new analysis results')
-    parser.add_argument('--nc_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/npy_data')
-    parser.add_argument('--som_map_path', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_map.npy')
+    parser.add_argument('--output_dir', type=str, default=str(project_root / 'analysis_results_3'), help='Path to load pre-trained model')
+    parser.add_argument('--save_dir', type=str, default=str(project_root / 'mlp_singlepoint'), help='Path to save new analysis results')
+    parser.add_argument('--nc_dir', type=str, default=str(default_data_dir))
+    parser.add_argument('--som_map_path', type=str, default=str(project_root / 'data' / 'metadata' / 'som_map.npy'))
     parser.add_argument('--stats_file', type=str, default='normalization_stats.json')
 
     # -------------------------------------------------------
@@ -100,7 +103,9 @@ def recover():
     print(f">>> Model Path : {MODEL_DIR}")
     print(f">>> Result Path: {RESULT_DIR}")
     
-    REAL_STATS_PATH = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/npy_data/normalization_stats.json'
+    REAL_STATS_PATH = args.stats_file
+    if not os.path.isabs(REAL_STATS_PATH):
+        REAL_STATS_PATH = os.path.join(args.nc_dir, REAL_STATS_PATH)
 
     # -------------------------------------------------------
     # Logic B: 运行全图推断

@@ -15,10 +15,38 @@ logs_slurm/
 logs_slurm_3/
 models/
 venv/
+.venv/
 .ipynb_checkpoints/
+
+# Python/build caches and machine-local environments
+__pycache__/
+*.py[cod]
+*.bak_*
+.runtime_*/
+venv_*/
+
+# Experiment products and local logs
+prediction_region_animations-*/
+prediction_region_animations_*/
+logs_a14_*/
+logs_temporal_spatial/
+aggregated_results/
+fig/
+
+# Raw and derived data archives
+processed/
+npy_data/
+
+# Small reproducibility metadata intentionally included in the release
+!data/
+!data/metadata/
+!data/metadata/*.npy
+!data/metadata/*.npz
+!data/metadata/*.json
 
 # 忽略大数据文件
 *.npy
+*.npz
 *.pth
 *.png
 *.pdf
@@ -27,6 +55,14 @@ venv/
 *.json
 *.out
 *.err
+
+# Re-include only the lightweight publication metadata after the global
+# archive rules above.
+!data/
+!data/metadata/
+!data/metadata/*.npy
+!data/metadata/*.npz
+!data/metadata/*.json
 
 # 忽略临时文件
 untitled.txt

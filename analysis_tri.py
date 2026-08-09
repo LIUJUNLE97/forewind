@@ -4,13 +4,15 @@ import pyvista as pv
 import os
 
 # ================= 配置区 =================
-INPUT_FILE = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed/processed_2021.nc'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.abspath(__file__)))
+PROCESSED_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
+INPUT_FILE = os.environ.get('WIND_REFERENCE_NC', os.path.join(PROCESSED_DIR, 'processed_2021.nc'))
 OUTPUT_VTS = 'terrain_model_final.vts'
 
 # 检查文件
 if not os.path.exists(INPUT_FILE):
     import glob
-    files = glob.glob('/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed/*.nc')
+    files = glob.glob(os.path.join(PROCESSED_DIR, '*.nc'))
     INPUT_FILE = files[0] if files else exit("错误：未找到 .nc 文件")
 
 print(f"开始处理文件: {os.path.basename(INPUT_FILE)}")

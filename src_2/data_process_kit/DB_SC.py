@@ -14,8 +14,9 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # ================= 配置路径 =================
-INPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
-OUTPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som_evaluation'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+INPUT_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
+OUTPUT_DIR = os.environ.get('WIND_SOM_OUTPUT_DIR', os.path.join(PROJECT_ROOT, 'fig', 'som_evaluation'))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # 对应文章 Fig 3，测试从 2 到 12 个聚类 [cite: 248]

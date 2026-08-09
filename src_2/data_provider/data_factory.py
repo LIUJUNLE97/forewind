@@ -1,3 +1,5 @@
+import os
+
 from .data_loader import UnifiedWeatherDataset, fast_collate_fn
 from torch.utils.data import DataLoader
 
@@ -28,11 +30,15 @@ def data_provider(args, flag):
     current_loc_config = args.test_location_config if args.fix_location else None
 
     print(f"[{flag.upper()}] Loading UnifiedWeatherDataset (Fixed Location: {args.fix_location})...")
+    original_nc_dir = getattr(
+        args,
+        'original_nc_dir',
+        os.path.join(os.path.dirname(os.path.abspath(args.nc_dir)), 'processed'),
+    )
     dataset = Data(
         nc_dir=args.nc_dir,  
         som_map_path=args.som_map_path,
-        # 这里硬编码原始 NC 路径，仅用于初始化读取经纬度坐标
-        original_nc_dir='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed', 
+        original_nc_dir=original_nc_dir,
         mode=flag,
         patch_size=args.patch_size,       
         time_steps_in=args.seq_len,

@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 from pathlib import Path
 from matplotlib.colors import LinearSegmentedColormap
 import warnings
@@ -79,8 +80,9 @@ MODELS = [
     'convgru', 'trajgru', 'predrnn', 'unet'
 ]
 
-BASE_DIR = Path('./24-24')
-OUTPUT_DIR = Path('aggregated_results')
+PROJECT_ROOT = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parent))
+BASE_DIR = Path(os.environ.get('WIND_RESULTS_DIR', PROJECT_ROOT / '7-24'))
+OUTPUT_DIR = Path(os.environ.get('WIND_FIG_DIR', PROJECT_ROOT / 'fig'))
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # 关键指标分组

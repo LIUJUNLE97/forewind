@@ -172,6 +172,9 @@ def plot_wind_field_comparison(pred, true, sample_idx, t_idx, save_path, city, m
         # 传入 extent 参数，将像素映射到经纬度
         im = ax.imshow(data, cmap=cmap, vmin=_min, vmax=_max, origin='lower', aspect='equal', extent=map_extent)
         ax.set_title(title, fontsize=22, fontweight='bold', pad=15)
+        for spine in ax.spines.values():
+            spine.set_color('black')
+            spine.set_linewidth(1.2)
         
         # 修改为更标准的经纬度标签
         ax.set_xlabel('Longitude (°E)', fontsize=20)
@@ -216,6 +219,9 @@ def plot_wind_speed_evolution(pred, true, save_path, city, model_name):
     ax1.tick_params(axis='both', labelsize=24)
     ax1.legend(fontsize=24)
     ax1.grid(alpha=0.3)
+    for spine in ax1.spines.values():
+        spine.set_color('black')
+        spine.set_linewidth(1.2)
 
     # 误差箱线图
     err_dist = [(compute_wind_speed(pred[t,0], pred[t,1]) - compute_wind_speed(true[t,0], true[t,1])).flatten() for t in range(T)]
@@ -226,6 +232,9 @@ def plot_wind_speed_evolution(pred, true, save_path, city, model_name):
     ax2.set_xlabel('Forecast Hour', fontsize=24)
     # 调大刻度字体
     ax2.tick_params(axis='both', labelsize=20)
+    for spine in ax2.spines.values():
+        spine.set_color('black')
+        spine.set_linewidth(1.2)
     
     plt.savefig(save_path, dpi=200, bbox_inches='tight')
     plt.close()
@@ -236,14 +245,15 @@ def plot_wind_speed_evolution(pred, true, save_path, city, model_name):
 
 def main():
     parser = argparse.ArgumentParser(description='Wind Field Visualization - Batch Mode')
+    project_root = Path(os.environ.get("WIND_PROJECT_ROOT", Path(__file__).resolve().parents[1]))
     # 移除了命令行输入的 --city 和 --model，由代码内部的循环接管
     
-    parser.add_argument('--base_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/24-24')
-    parser.add_argument('--nc_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/npy_data')
-    parser.add_argument('--som_map_path', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_map.npy')
-    parser.add_argument('--output_dir', type=str, default='./wind_visualizations')
+    parser.add_argument('--base_dir', type=str, default=str(project_root / '7-24'))
+    parser.add_argument('--nc_dir', type=str, default=str(project_root / 'npy_data'))
+    parser.add_argument('--som_map_path', type=str, default=str(project_root / 'som_map.npy'))
+    parser.add_argument('--output_dir', type=str, default='./wind_visualizations_7_24')
     
-    parser.add_argument('--seq_len', type=int, default=24)
+    parser.add_argument('--seq_len', type=int, default=168)
     parser.add_argument('--pred_len', type=int, default=24)
     parser.add_argument('--patch_size', type=int, default=64)
     parser.add_argument('--batch_size', type=int, default=32)

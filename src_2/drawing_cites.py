@@ -9,9 +9,9 @@ import xarray as xr
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
 # ================= 配置区域 =================
-BASE_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2'
-SOM_PATH = os.path.join(BASE_DIR, 'som/som_map.npy') # 请确认路径
-NC_DIR = os.path.join(BASE_DIR, 'processed') # 用于读取经纬度
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SOM_PATH = os.environ.get('WIND_SOM_MAP', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_map.npy'))
+NC_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
 
 # 采样配置
 PATCH_SIZE = 64  # 训练时的切片大小

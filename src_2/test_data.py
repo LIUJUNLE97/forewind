@@ -1,13 +1,17 @@
 import argparse
+import os
+from pathlib import Path
 import torch
 from data_provider.data_factory import data_provider
 
 # 1. 模拟 args 参数 (假装是从命令行输入的)
 parser = argparse.ArgumentParser(description='Data Loading Test')
+PROJECT_ROOT = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parents[1]))
+DEFAULT_DATA_DIR = Path(os.environ.get('WIND_PROCESSED_DIR', PROJECT_ROOT / 'processed'))
 
 # 路径设置 (请修改为你服务器的真实路径!)
-parser.add_argument('--nc_dir', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed')
-parser.add_argument('--som_map_path', type=str, default='/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_map.npy')
+parser.add_argument('--nc_dir', type=str, default=str(DEFAULT_DATA_DIR))
+parser.add_argument('--som_map_path', type=str, default=str(PROJECT_ROOT / 'data' / 'metadata' / 'som_map.npy'))
 parser.add_argument('--stats_file', type=str, default='normalization_stats.json')
 
 # 模型参数

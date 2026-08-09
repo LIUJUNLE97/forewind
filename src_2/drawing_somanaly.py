@@ -13,9 +13,10 @@ from matplotlib.lines import Line2D
 warnings.filterwarnings("ignore")
 
 # ================= 配置区域 =================
-NC_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/processed'
-CLUSTER_CSV = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/data_2/som/som_full_results.csv'
-OUTPUT_DIR = '/mimer/NOBACKUP/groups/kthmech/junle/guandi_wind_project/som_post_analysis'
+PROJECT_ROOT = os.environ.get('WIND_PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+NC_DIR = os.environ.get('WIND_PROCESSED_DIR', os.path.join(PROJECT_ROOT, 'processed'))
+CLUSTER_CSV = os.environ.get('WIND_SOM_CSV', os.path.join(PROJECT_ROOT, 'data', 'metadata', 'som_full_results.csv'))
+OUTPUT_DIR = os.environ.get('WIND_SOM_OUTPUT_DIR', os.path.join(PROJECT_ROOT, 'fig', 'som_post_analysis'))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 SAMPLE_LINES = 50   # 采样线条数
