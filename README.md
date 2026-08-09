@@ -1,4 +1,4 @@
-# Guandi Wind Project
+# Forewind
 
 Code and analysis workflows for SOM-based regional wind-field prediction with CNN, FNO, KAN, ConvLSTM, ConvGRU, TrajGRU, PredRNN, and U-Net baselines.
 
