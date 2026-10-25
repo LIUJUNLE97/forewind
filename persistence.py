@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-A1 (合并版): persistence skill score 一站式计算 + 出图。
+  1. from final_eval_point_{true,pred}.npy compute model / persistence de MSE
+  2. compute SS_persist = 1 - MSE_model / MSE_persist 
+  3. a1_skill_scores.csv
+  4. heatmap
 
-跑一次完成:
-  1. 从 final_eval_point_{true,pred}.npy 直接计算 model / persistence 的 MSE
-  2. 算 SS_persist = 1 - MSE_model / MSE_persist (含 'all' 与逐步长)
-  3. 写 a1_skill_scores.csv
-  4. 出发散色标热力图 (零点 SS=0; 红=劣于基线, 蓝=优于基线), Nature 排版
-
-persistence 定义 (标准):
-  yhat_{t+h} = y_t  (输入窗最后一帧, 即起报时刻的观测值, 对全部 24 步持平)
-  由于 .npy 只存了目标窗, 利用 stride=1 的性质:
-    correct_anchor[i] = true[i-1, 0]  (前一样本的目标首帧 = 当前样本输入末帧)
-  丢弃第 0 个样本 (无前驱), N 减少 1, 对统计量无影响。
+persistence definition):
+  y_hat_{t+h} = y_t  
+    correct_anchor[i] = true[i-1, 0]  
+  
 """
 
 import warnings
@@ -28,15 +24,13 @@ from matplotlib.colors import TwoSlopeNorm
 
 warnings.filterwarnings('ignore')
 
-# ════════════════════════════════════════════════════════════════
-# 配置
-# ════════════════════════════════════════════════════════════════
+# config
 PROJECT_ROOT = Path(os.environ.get('WIND_PROJECT_ROOT', Path(__file__).resolve().parent))
 BASE = Path(os.environ.get('WIND_RESULTS_DIR', PROJECT_ROOT / '24-24'))
 OUTPUT_DIR = Path(os.environ.get('WIND_FIG_DIR', PROJECT_ROOT / 'fig')) / 'fig_skill'
 OUT_CSV = Path('a1_skill_scores.csv')
 
-CLIP_COLORBAR = 1.0   # 色标对称截断范围; None = 用真实最大绝对值 (会被 Golmud -2.35 拉满)
+CLIP_COLORBAR = 1.0   
 
 CITIES = ['shanghai', 'chengdu', 'hohhot', 'qingdao', 'guangzhou',
           'urumqi', 'lhasa', 'golmud', 'kunming', 'wuhan', 'fuzhou', 'haikou']
@@ -50,11 +44,8 @@ PLATEAU = ['Hohhot', 'Urumqi', 'Golmud', 'Kunming', 'Lhasa']
 ORDERED_CITIES = COASTAL + INLAND + PLATEAU
 ORDERED_MODELS = ['CNN', 'U-Net', 'ConvLSTM', 'ConvGRU', 'TrajGRU', 'PredRNN', 'FNO', 'KAN']
 
-# ── Nature 排版 (复用 Figure 1) ──────────────────────────────────
 FIG_WIDTH_IN = 7.09
 
-# 字号集中控制: 调 FONT_SCALE 即可整体放大/缩小所有文字。
-#   1.0 = 原始 Nature 双栏 (~6pt 印刷); 占单栏或想更清晰时调到 1.3~1.6。
 FONT_SCALE = 1.35
 PT_TITLE = 7.0 * FONT_SCALE
 PT_LABEL = 6.5 * FONT_SCALE
@@ -75,19 +66,8 @@ import logging
 logging.getLogger('matplotlib.font_manager').setLevel(logging.ERROR)
 
 
-# ════════════════════════════════════════════════════════════════
-# 1. 计算
-# ════════════════════════════════════════════════════════════════
 def process(city, model):
-    """
-    标准 persistence: yhat_{t+h} = y_t  (输入窗最后一帧, 即起报时刻观测)
-
-    数据里只存了目标窗 true[i, :] = [y_{t+1}, ..., y_{t+24}]。
-    但 stride=1 (逐帧滑窗) 意味着:
-      true[i-1, 0] = 绝对时刻 indices[i-1]+24 = indices[i]+23 的风速
-                    = 样本 i 的输入窗最后一帧 = y_t  ← 正确锚点!
-    因此: correct_anchor[i] = true[i-1, 0], 丢弃第 0 个样本 (无前驱)。
-    """
+    
     d = BASE / f'analysis_results_{city}' / model
     ft, fp = d / 'final_eval_point_true.npy', d / 'final_eval_point_pred.npy'
     if not (ft.exists() and fp.exists()):
@@ -95,9 +75,9 @@ def process(city, model):
     true_raw = np.load(ft).astype(np.float64)   # [N, 24]
     pred_raw = np.load(fp).astype(np.float64)
 
-    # 正确锚点: 前一样本的目标首帧 = 当前样本输入窗末帧
+  
     anchor = true_raw[:-1, 0]       # [N-1]  = y_t for samples 1..N-1
-    true   = true_raw[1:]           # [N-1, 24] 丢弃 sample 0
+    true   = true_raw[1:]           # [N-1, 24] throw sample 0
     pred   = pred_raw[1:]           # [N-1, 24]
     persist = np.repeat(anchor[:, None], true.shape[1], axis=1)  # [N-1, 24]
 
@@ -136,26 +116,23 @@ def compute():
     agg = df[df.Step == 'all'].copy()
     agg['ss_persist'] = agg['ss_persist'].replace([np.inf, -np.inf], np.nan)
 
-    print('\n=== 健全性检查 (N-1 样本, 应与 CSV 近似吻合, 不必完全相等) ===')
+    print('\n  check check check check check check')
     for city in ['haikou', 'chengdu']:
         sub = agg[(agg.City == city.capitalize()) & (agg.Model == 'CNN')]
         if not sub.empty:
             print(f'  {city} CNN: rmse_model = {sub.rmse_model.values[0]:.4f}'
-                  f'  (CSV 参考: haikou≈0.579, chengdu≈1.092)')
+                  f'  (CSV ref: haikou≈0.579, chengdu≈1.092)')
 
-    print('\n=== SS_persist < 0 (打不过 persistence) ===')
+  
     bad = agg[agg.ss_persist < 0][['City', 'Model', 'ss_persist']]
     print(bad.to_string(index=False) if not bad.empty else '  (无)')
 
-    print('\n=== 各站平均 SS_persist ===')
+    print('\n=== SS_persist ===')
     print(agg.groupby('City')['ss_persist'].mean()
           .reindex(ORDERED_CITIES).round(3).to_string())
     return agg
 
 
-# ════════════════════════════════════════════════════════════════
-# 2. 出图
-# ════════════════════════════════════════════════════════════════
 def plot(agg, out_stem='skill_persistence'):
     piv = agg.pivot_table(values='ss_persist', index='Model',
                           columns='City', aggfunc='mean')
@@ -165,7 +142,7 @@ def plot(agg, out_stem='skill_persistence'):
     vals = pivot.values
     n_rows, n_cols = pivot.shape
 
-    print('\nSS_persist 透视 (出图用):')
+    print('\nSS_persist')
     print(pivot.round(3).to_string())
 
     row_h, top_pad, bot_pad = 0.34, 0.80, 0.82
@@ -219,7 +196,7 @@ def plot(agg, out_stem='skill_persistence'):
 
     ax.set_ylabel('Model', fontsize=PT_LABEL, labelpad=4)
     ax.set_xlabel('City', fontsize=PT_LABEL, labelpad=4)
-    # 标题保持干净; 色标截断说明请写入 LaTeX \caption:
+  
     #   "Color scale is clipped at +/-1; FNO at Golmud has SS = -2.35."
     ax.set_title('Skill score vs persistence', fontsize=PT_TITLE, pad=14, loc='left')
 
