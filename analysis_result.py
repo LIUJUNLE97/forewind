@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-注：这个代码是用于对所有结果做综合评估的，例如24-24的数据。
+Note: 
+This code is used for a comprehensive evaluation of all results—for example, data from the 24-24 set.
 """
 
 import pandas as pd
@@ -13,11 +14,8 @@ from matplotlib.colors import LinearSegmentedColormap
 import warnings
 warnings.filterwarnings('ignore')
 
-# ============================================
-# 1. 高质量学术配色方案 (提取自预设的期刊风格)
-# ============================================
 
-# 离散模型颜色 (用于区分 8 个模型)
+# Farben
 MODEL_COLORS = [
     '#1867ad',  # CNN: 经典蓝
     '#f87c01',  # FNO: 明橙色
@@ -29,29 +27,23 @@ MODEL_COLORS = [
     '#08316b'   # UNet: 深藏青
 ]
 
-# 连续渐变色 A (用于 RMSE, MAE 等越小越好的指标)
-# 浅黄 -> 金黄 -> 橙红 -> 正红 -> 深棕 (表现从好到坏)
+# color set A
 error_colors = ['#fefe51', '#fdbb00', '#f58457', '#df1200', '#392514']
 cmap_error = LinearSegmentedColormap.from_list('error_cmap', error_colors)
 
-# 发散渐变色 B (用于 R, ACC 等越高越好的指标)
-# 正红(差) -> 珊瑚红 -> 淡黄(中) -> 天蓝 -> 经典蓝(好)
+# B
 corr_colors = ['#df1200', '#ee7e65', '#fefe98', '#4f9bcb', '#1867ad']
 cmap_corr = LinearSegmentedColormap.from_list('corr_cmap', corr_colors)
 
-# 排名专属渐变色 (1为最好用蓝色，数字越大越差用红色)
+# C
 rank_colors = ['#1867ad', '#4f9bcb', '#fefe98', '#ee7e65', '#df1200']
 cmap_rank = LinearSegmentedColormap.from_list('rank_cmap', rank_colors)
 
 
-# ============================================
-# 2. 全局绘图参数配置 (全局放大字体)
-# ============================================
-
 plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['Arial', 'DejaVu Sans', 'Helvetica']
 
-# 将基础字号整体放大以适应报告或论文展示需求
+# Font
 plt.rcParams['font.size'] = 22
 plt.rcParams['axes.labelsize'] = 24
 plt.rcParams['axes.titlesize'] = 24
@@ -64,10 +56,6 @@ plt.rcParams['axes.linewidth'] = 2.0
 plt.rcParams['grid.linewidth'] = 1.2
 plt.rcParams['lines.linewidth'] = 2.5
 
-
-# ============================================
-# 3. 数据分析基础配置
-# ============================================
 
 CITIES = [
     'shanghai', 'chengdu', 'hohhot', 'qingdao', 
@@ -85,7 +73,6 @@ BASE_DIR = Path(os.environ.get('WIND_RESULTS_DIR', PROJECT_ROOT / '7-24'))
 OUTPUT_DIR = Path(os.environ.get('WIND_FIG_DIR', PROJECT_ROOT / 'fig'))
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-# 关键指标分组
 KEY_METRICS_GROUPS = {
     'Patch U Component': ['Patch_U_RMSE', 'Patch_U_RMSE_OOD', 'Patch_U_ACC'],
     'Patch V Component': ['Patch_V_RMSE', 'Patch_V_RMSE_OOD', 'Patch_V_ACC'],
@@ -100,10 +87,10 @@ MAIN_METRICS = [
 
 
 def collect_results():
-    """收集所有结果"""
+
     results = []
     missing_cities = []
-    print("\n开始收集数据...")
+    print("\n collecting data...")
     print("=" * 70)
     for city in CITIES:
         city_has_data = False
@@ -117,21 +104,20 @@ def collect_results():
                 print(f"✓ {city:12s} - {model:10s}")
                 city_has_data = True
             else:
-                print(f"✗ {city:12s} - {model:10s} - 文件不存在")
+                print(f"✗ {city:12s} - {model:10s} - invalid dir")
         if not city_has_data:
             missing_cities.append(city)
     print("=" * 70)
     if not results:
-        raise ValueError("没有找到任何数据文件！请检查 BASE_DIR 配置是否正确。")
+        raise ValueError("no file")
     combined = pd.concat(results, ignore_index=True)
-    print(f"\n✓ 总计: {len(combined)} 条记录")
+    print(f"\n✓ 总计: {len(combined)} records")
     if missing_cities:
-        print(f"\n⚠ 缺失数据的城市: {', '.join(missing_cities)}")
+        print(f"\n⚠ missing cities {', '.join(missing_cities)}")
     return combined
 
 
 def create_summary_tables(df):
-    """创建汇总统计表"""
     metric_cols = [col for col in df.select_dtypes(include=[np.number]).columns 
                    if col not in ['Lat', 'Lon']]
     model_summary = df.groupby('Model')[metric_cols].agg(['mean', 'std', 'min', 'max']).round(4)
@@ -141,7 +127,6 @@ def create_summary_tables(df):
 
 
 def create_ranking_tables(df, metric_cols):
-    """创建排名表"""
     rankings = {}
     for metric in MAIN_METRICS:
         model_avg = df.groupby('Model')[metric].mean()
@@ -153,20 +138,15 @@ def create_ranking_tables(df, metric_cols):
     return pd.DataFrame(rankings).round(4)
 
 
-# ============================================
-# 4. 可视化函数 (局部放大字体 & 应用自定义配色)
-# ============================================
 
 def plot_main_metrics_comparison(df, output_dir):
-    """绘制主要指标对比图"""
     fig, axes = plt.subplots(2, 2, figsize=(20, 16))
     fig.suptitle('Model Performance Comparison', fontweight='bold', y=0.99)
     
     for idx, metric in enumerate(MAIN_METRICS):
         ax = axes[idx // 2, idx % 2]
         plot_data = df.groupby('Model')[metric].agg(['mean', 'std']).reset_index()
-        
-        # 根据指标特性排序并映射颜色
+     
         if 'R' in metric or 'ACC' in metric:
             plot_data = plot_data.sort_values('mean', ascending=False)
             colors = [cmap_corr(1.0 - i / max(1, len(plot_data)-1)) for i in range(len(plot_data))]
@@ -246,8 +226,6 @@ def plot_city_comparison(df, output_dir):
 
 
 def plot_comprehensive_heatmap(df, output_dir):
-    """绘制综合热力图"""
-    # 针对热力图单元格被挤压的情况，大幅增加了画布的大小 (从 24x20 扩大至 32x24)
     fig, axes = plt.subplots(2, 2, figsize=(32, 24))
     fig.suptitle('Performance Heatmap: Model × City', fontweight='bold', y=0.99)
     
@@ -283,7 +261,6 @@ def plot_comprehensive_heatmap(df, output_dir):
 
 
 def plot_metric_groups(df, output_dir):
-    """按指标组绘图"""
     for group_name, metrics in KEY_METRICS_GROUPS.items():
         available_metrics = [m for m in metrics if m in df.columns]
         if not available_metrics:
@@ -307,7 +284,6 @@ def plot_metric_groups(df, output_dir):
                 ascending=('R' not in metric and 'ACC' not in metric)
             )
             
-            # 使用预设的 8 种颜色，确保无论顺序如何，同一模型颜色保持一致
             model_order = plot_data.index.tolist()
             model_to_color = dict(zip(['CNN', 'FNO', 'KAN', 'CONVLSTM', 'CONVGRU', 'TRAJGRU', 'PREDRNN', 'UNET'], 
                                      MODEL_COLORS))
@@ -340,7 +316,6 @@ def plot_metric_groups(df, output_dir):
 
 
 def plot_normalized_comparison(df, output_dir):
-    """绘制归一化综合对比图"""
     fig, ax = plt.subplots(figsize=(18, 12))
     models = df['Model'].unique()
     normalized_data = {}
@@ -359,7 +334,6 @@ def plot_normalized_comparison(df, output_dir):
     
     for i, metric in enumerate(MAIN_METRICS):
         offset = width * (i - len(MAIN_METRICS)/2 + 0.5)
-        # 从模型配色组中顺延提取颜色，区分不同指标
         metric_color = MODEL_COLORS[i % len(MODEL_COLORS)]
         
         ax.bar(x + offset, norm_df[metric], width, 
@@ -406,7 +380,6 @@ def plot_ranking_summary(df, output_dir):
     rank_df = pd.DataFrame(ranking_data)
     pivot_ranks = rank_df.pivot(index='Model', columns='Metric', values='Rank')
     
-    # 使用排名专属的渐变色 (蓝->红)
     sns.heatmap(pivot_ranks, annot=True, fmt='.0f', cmap=cmap_rank, 
                ax=ax, cbar_kws={'label': 'Rank (Lower is Better)', 'shrink': 0.8},
                linewidths=2, linecolor='white',
@@ -430,34 +403,33 @@ def plot_ranking_summary(df, output_dir):
 
 
 def save_excel_compatible(df, model_summary, city_summary, model_city_detail, ranking_df, output_path):
-    """保存Excel文件（兼容xlsxwriter）"""
     try:
         with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-            df.to_excel(writer, sheet_name='原始数据', index=False)
-            model_summary.to_excel(writer, sheet_name='按模型汇总')
-            city_summary.to_excel(writer, sheet_name='按城市汇总')
-            model_city_detail.to_excel(writer, sheet_name='模型城市详细')
-            ranking_df.to_excel(writer, sheet_name='模型排名')
+            df.to_excel(writer, sheet_name='raw', index=False)
+            model_summary.to_excel(writer, sheet_name='summary')
+            city_summary.to_excel(writer, sheet_name='sum_by_cities')
+            model_city_detail.to_excel(writer, sheet_name='detail')
+            ranking_df.to_excel(writer, sheet_name='ranking')
             for metric in MAIN_METRICS:
                 pivot = df.pivot_table(values=metric, index='Model', columns='City', aggfunc='mean')
                 sheet_name = metric[:25]
                 pivot.to_excel(writer, sheet_name=sheet_name)
         return True
     except Exception as e:
-        print(f"⚠ Excel保存失败 ({e})，将只保存CSV文件")
+        print(f" error ({e})，csv")
         return False
 
 
 def main():
     print("\n" + "=" * 70)
-    print("   风场预测模型性能汇总分析")
+    print("HERE WE GO")
     print("=" * 70)
     
     df = collect_results()
     model_summary, city_summary, model_city_detail, metric_cols = create_summary_tables(df)
     ranking_df = create_ranking_tables(df, metric_cols)
     
-    print("\n步骤: 生成可视化图表 (应用学术期刊配色并放大字体)")
+  
     plot_main_metrics_comparison(df, OUTPUT_DIR)
     plot_city_comparison(df, OUTPUT_DIR)
     plot_comprehensive_heatmap(df, OUTPUT_DIR)
@@ -466,7 +438,7 @@ def main():
     plot_ranking_summary(df, OUTPUT_DIR)
     
     print("\n" + "=" * 70)
-    print("   分析完成！图表及结果均已更新并保存至:")
+    print("   FINIR, L'adresse est")
     print(f"   {OUTPUT_DIR.absolute()}")
     print("=" * 70 + "\n")
 
