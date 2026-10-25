@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-A1 (定稿): persistence skill score，直接从 point_pred/true.npy 计算。
+ persistence skill score，directly to point_pred/true.npy
 
-数据事实 (来自探查):
-  final_eval_point_true.npy / _pred.npy : shape [N, 24], 单点合成风速 (m/s)
-  与 final_eval_metrics.csv 的 SinglePoint_RMSE 同口径 (haikou cnn=0.579 已核对)
+  final_eval_point_true.npy / _pred.npy : shape [N, 24], single point velocity (m/s)
+  
+def persistence :
+ Use the first ground-truth frame in each sample's forecast window, y[:, 0],
+ as the initialization anchor and hold it constant across all 24 forecast steps.
 
-persistence 定义 (无时间戳退路):
-  以每个样本预测窗的首帧真值 y[:,0] 作为起报锚点, 对全部 24 步持平。
-  注: 这访问了 t+1 而非严格的 t, 使 persistence 略偏强、SS 偏保守 (对结论有利)。
-  若后续提供测试集时间切分, 可换用真正的起报帧并补 climatology。
-
-输出:
-  a1_skill_scores.csv  (每站每模型: rmse_model / rmse_persist / ss_persist,
-                        含 'all' 与逐步长 per-leadtime)
-  控制台: SS<0 的配置 + 各站平均 SS (Chengdu 检验)
+output
+  a1_skill_scores.csv  (for each city-station/model: rmse_model / rmse_persist / ss_persist, per-leadtime)
+  config SS<0  +  SS 
 """
 
 import numpy as np
