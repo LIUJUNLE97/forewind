@@ -149,7 +149,7 @@ def plot_lmm_forest(df, output_prefix="fig_lmm_forest"):
     plt.savefig(f"{output_prefix}.png", dpi=300, bbox_inches='tight')
     plt.savefig(f"{output_prefix}.pdf", dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  [+] 统计效应森林图已生成: {output_prefix}.png")
+    print(f"  [+]  {output_prefix}.png")
 
 
 if __name__ == "__main__":
@@ -157,11 +157,11 @@ if __name__ == "__main__":
     
     try:
         df = pd.read_csv(csv_path)
-        print("数据加载成功，开始执行可视化流水线...")
+        print(" pipline begin...")
         
         plot_model_sensitivity_heatmap(df)
         plot_lmm_forest(df)
         
-        print("\n所有学术图表生成完毕。")
+        print("\n finir!!!!")
     except FileNotFoundError:
-        print(f"错误: 找不到数据文件 {csv_path}。请确保数据准备脚本已正确运行。")
+        print(f"error, no data file {csv_path}")
