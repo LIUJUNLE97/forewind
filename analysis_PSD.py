@@ -9,8 +9,8 @@ warnings.filterwarnings("ignore")
 
 def plot_psd_comparison(city, model, base_dir="7-24", output_base_dir="psd_7_24"):
     """
-    读取指定城市与模型的真实/预测数据，绘制功率谱密度 (PSD) 对比图，
-    并按 psd/city/model.png 的层级结构保存为 PNG 文件。
+    dir:
+    psd/city/model.png 
     """
     target_dir = os.path.join(base_dir, f"analysis_results_{city}", model)
     pred_path = os.path.join(target_dir, "final_eval_point_pred.npy")
@@ -20,7 +20,7 @@ def plot_psd_comparison(city, model, base_dir="7-24", output_base_dir="psd_7_24"
         print(f"[-] 缺失数据文件，跳过: {city} - {model}")
         return False
 
-    # 1. 载入时空预测数据
+    # 载入时空预测数据
     try:
         pred = np.load(pred_path)
         true = np.load(true_path)
@@ -28,11 +28,10 @@ def plot_psd_comparison(city, model, base_dir="7-24", output_base_dir="psd_7_24"
         print(f"[!] 读取 {city} - {model} 时发生错误: {e}")
         return False
 
-    # 2. 选取预报步长进行分析 (第 1 小时 vs 第 24 小时)
+    # 选取预报步长进行分析 
     lead_times_to_plot = [0, 23]
     labels = ['1h Lead Time', '24h Lead Time']
 
-    # 设定无衬线字体
     plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
     fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
     fig.suptitle(f'Power Spectral Density (PSD) Analysis - {city.capitalize()} ({model.upper()})', fontsize=14)
@@ -92,7 +91,7 @@ if __name__ == "__main__":
     ]
 
     total_tasks = len(cities) * len(models)
-    print(f"开始批量生成 PSD 分析图，预期任务: {total_tasks} 组...")
+    print(f" PSD : {total_tasks} groups...")
 
     success_count = 0
     for city in cities:
@@ -101,7 +100,7 @@ if __name__ == "__main__":
             if success:
                 success_count += 1
                 if success_count % 10 == 0:
-                    print(f"  [+] 已完成 {success_count} 组制图任务...")
+                    print(f"  [+] finir {success_count} ...")
 
-    print(f"\n执行完毕。成功生成并导出 {success_count} 张 PNG 图像。")
-    print("文件已按空间结构存储在当前目录的 ./psd/ 文件夹中。")
+    print(f"\n successfully plot {success_count}  PNG imgs。")
+    print("dir, ./psd/ ")
