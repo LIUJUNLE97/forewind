@@ -50,7 +50,7 @@ def process(city, model):
     persist = persistence_pred(true)
 
     rows = []
-    # 'all': 对所有 (sample, step) 平方误差求总均值 (与 CSV 的 RMSE 同口径)
+    # 'all': 
     se_m = (pred - true) ** 2
     se_p = (persist - true) ** 2
     mse_m_all, mse_p_all = se_m.mean(), se_p.mean()
@@ -84,23 +84,22 @@ def main():
 
     agg = df[df.Step == 'all'].copy()
 
-    # 健全性检查: 重算的 model RMSE 应与 CSV 的 SinglePoint_RMSE 吻合
-    print('\n=== 健全性检查 (重算 RMSE, 应与 final_eval_metrics 吻合) ===')
+   
+    print('\check~')
     for city in ['haikou', 'chengdu']:
         sub = agg[(agg.City == city.capitalize()) & (agg.Model == 'CNN')]
         if not sub.empty:
             print(f'  {city} CNN: 重算 rmse_model = '
                   f'{sub.rmse_model.values[0]:.3f}')
 
-    print('\n=== SS_persist < 0 的配置 (打不过 persistence) ===')
+   
     bad = agg[agg.ss_persist < 0][['City', 'Model', 'ss_persist']]
-    print(bad.to_string(index=False) if not bad.empty else '  (无)')
+    print(bad.to_string(index=False) if not bad.empty else '  (none)')
 
-    print('\n=== 各站平均 SS_persist (Chengdu 检验) ===')
+    print('\n SS_persist ')
     print(agg.groupby('City')['ss_persist'].mean()
           .reindex(ORDERED_CITIES).round(3).to_string())
 
-    print('\n=== 各站 × 模型 SS_persist 透视表 ===')
     piv = agg.pivot_table(values='ss_persist', index='Model',
                           columns='City', aggfunc='mean')
     piv = piv.reindex(columns=[c for c in ORDERED_CITIES if c in piv.columns])
